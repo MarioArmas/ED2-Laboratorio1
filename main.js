@@ -19,274 +19,296 @@ const data = [
 
 
 
-class Node {
-  constructor(person) {
-    this.person = person
-    //this.nameAscii = compare(person.name)
-    this.left = null
-    this.right = null
-    this.height = 1
+/* const Node = {
+  "person": null,
+  "left": null,
+  "right": null,
+  "height": 1
+  // nameAscii = compare(person.name)
+} */
+
+let mainRoot = null
+let sortedByName = true
+
+const compareByName = (person1, bool, person2) => {
+  if (bool === '==') {
+    return person1.name == person2.name
+  }
+
+  if (bool === '>') {
+    return person1.name > person2.name
+  }
+
+  if (bool === '<') {
+    return person1.name < person2.name
   }
 }
 
-class AVLtree {
-  constructor() {
-    this.root = null
-    this.compareByName = (person1, bool, person2) => {
-      if (bool === '==') {
-        return person1.name == person2.name
-      }
-
-      if (bool === '>') {
-        return person1.name > person2.name
-      }
-
-      if (bool === '<') {
-        return person1.name < person2.name
-      }
-    }
-    this.compareByDPI = (person1, bool, person2) => {
-      if (bool === '==') {
-        return person1.dpi == person2.dpi
-      }
-
-      if (bool === '>') {
-        return person1.dpi > person2.dpi
-      }
-
-      if (bool === '<') {
-        return person1.dpi < person2.dpi
-      }
-    }
-    this.sortedByName = true
+const compareByDPI = (person1, bool, person2) => {
+  if (bool === '==') {
+    return person1.dpi == person2.dpi
   }
 
-  insert(key) {
-    const func = this.sortedByName ? this.compareByName : this.compareByDPI
-    this.root = this.#insertNode(this.root, key, func)
+  if (bool === '>') {
+    return person1.dpi > person2.dpi
   }
 
-  delete(name, dpi) {
-    const key = { name, dpi }
-    this.sortByDPI()
-
-    const func = this.sortedByName ? this.compareByName : this.compareByDPI
-    this.root = this.#deleteNode(this.root, key, func)
-  }
-
-  update(name, dpi) {
-    // TODO:
-
-  }
-
-  search(name) {
-    this.sortByName()
-    const key = { name }
-    
-    // TODO:
-  }
-
-  #insertNode(root, key, compare) {
-    this.print()
-    if (root == null) {
-      return new Node(key)
-    }
-    if (compare(key, '<', root.person)) {
-      root.left = this.#insertNode(root.left, key, compare)
-    }
-    else {
-      root.right = this.#insertNode(root.right, key, compare)
-    }
-
-    // Balance
-    root.height = 1 + Math.max(this.#getHeight(root.left), this.#getHeight(root.right))
-    const balanceFactor = this.#getBalance(root)
-
-    if (balanceFactor > 1) {
-      if (compare(key, '<', root.left.person)) {
-        return this.#rightRotation(root)
-      }
-      else {
-        root.left = this.#leftRotation(root.left)
-        return this.#rightRotation(root)
-      }
-    }
-
-    if (balanceFactor < -1) {
-      if (compare(key, '>', root.right.person)) {
-        return this.#leftRotation(root)
-      }
-      else {
-        root.right = this.#rightRotation(root.right)
-        return this.#leftRotation(root)
-      }
-    }
-
-    return root
-  }
-
-  #deleteNode(root, key, compare) {
-    if (root == null) {
-      return root
-    }
-
-    if (compare(key, '<', root.person)) {
-      root.left = this.#deleteNode(root.left, key)
-    }
-    else if (compare(key, '>', root.person)) {
-      root.right = this.#deleteNode(root.right, key)
-    }
-    else {
-      if (root.left == null) {
-        const temp = root.right
-        root = null
-        return temp
-      }
-      else if (root.right == null) {
-        const temp = root.left
-        root = null
-        return temp
-      }
-
-      temp = this.#getMinValueNode(root.right)
-      root.person = temp.person
-      root.right = this.#deleteNode(root.right, temp.person)
-    }
-
-    // TODO: test this bool
-    /* if root is None:
-        return root
-    */
-   if (root == null) return root
-  
-    // Balance
-    root.height = 1 + Math.max(this.#getHeight(root.left), this.#getHeight(root.right))  
-    balanceFactor = this.#getBalance(root)
-  
-    if (balanceFactor > 1) {
-      if (this.#getBalance(root.left) >= 0) {
-        return this.#rightRotation(root)
-      }
-      else {
-        root.left = this.#leftRotation(root.left)
-        return this.#rightRotation(root)
-      }
-    }
-    if (balanceFactor < -1) {
-      if (this.#getBalance(root.right) <= 0) {
-        return this.#leftRotation(root)
-      }
-      else {
-        root.right = this.#rightRotation(root.right)
-        return this.#leftRotation(root)
-      }
-    }
-    return root
-  }
-
-  #searchNode() {
-    
-  }
-
-  #getHeight(root) {
-    if (root == null) return 0
-    
-    return this.#getMinValueNode(root.left)
-  }
-
-  #getBalance(root) {
-    if (root == null) return 0
-    return this.#getHeight(root.left) - this.#getHeight(root.right)
-  }
-
-  #leftRotation(z) {
-    y = z.right
-    T2 = y.left
-    y.left = z
-    z.right = T2
-    z.height = 1 + Math.max(this.#getHeight(z.left), this.#getHeight(z.right))
-    y.height = 1 + Math.max(this.#getHeight(y.left), this.#getHeight(y.right))
-    return y
-  }
-
-  #rightRotation(z) {
-    y = z.left
-    T3 = y.right
-    y.right = z
-    z.left = T3
-    z.height = 1 + Math.max(this.#getHeight(z.left), this.#getHeight(z.right))
-    y.height = 1 + Math.max(this.#getHeight(y.left), this.#getHeight(y.right))
-    return y
-  }
-
-  #getMinValueNode(root) {
-    if (root == null || root.left == null) return root
-    return this.#getMinValueNode(root.left)
-  }
-
-  sortByName() {
-    items = this.#inOrder(this.root)
-    this.root = null
-    this.sortedByName = true
-    
-    items.forEach(x => {
-      this.insert(x)
-    })
-  }
-  
-  sortByDPI() {
-    const items = this.#inOrder(this.root)
-    this.root = null
-    this.sortedByName = false
-    
-    items.forEach(x => {
-      this.insert(x)
-    })
-  }
-
-  #inOrder(root) {
-    const items = []
-    if (root != null) {
-      this.#inOrder(root.left)
-      items.push(root.person)
-      this.#inOrder(root.right)
-    }
-
-    return items
-  }
-
-  print2() {
-    this.print(this.root)
-    console.log('done', this.root)
-  }
-
-  print(root) {
-    if (root != null) {
-      this.print(root.left)
-      console.log(root.person)
-      this.print(root.right)
-    }
+  if (bool === '<') {
+    return person1.dpi < person2.dpi
   }
 }
 
-/* const tree = new AVLtree
-tree.sortByDPI()
+const insert = (key) => {
+  const func = sortedByName ? compareByName : compareByDPI
+  mainRoot = insertNode(mainRoot, key, func)
+}
+
+const remove = (key) => {
+  sortByDPI()
+
+  const func = sortedByName ? compareByName : compareByDPI
+  mainRoot = removeNode(mainRoot, key, func)
+}
+
+const update = (name, dpi) => {
+  // TODO:
+
+}
+
+const search = (name) => {
+  sortByName()
+  const key = { name }
+  
+  // TODO:
+}
+
+const insertNode = (root, key, compare) => {
+  print()
+  if (root == null) {
+    return Node = {
+      "person": key,
+      "left": null,
+      "right": null,
+      "height": 1
+    }
+  }
+  if (compare(key, '<', root.person)) {
+    root.left = insertNode(root.left, key, compare)
+  }
+  else {
+    root.right = insertNode(root.right, key, compare)
+  }
+
+  // Balance
+  root.height = 1 + Math.max(getHeight(root.left), getHeight(root.right))
+  const balanceFactor = getBalance(root)
+
+  if (balanceFactor > 1) {
+    if (compare(key, '<', root.left.person)) {
+      return rightRotation(root)
+    }
+    else {
+      root.left = leftRotation(root.left)
+      return rightRotation(root)
+    }
+  }
+
+  if (balanceFactor < -1) {
+    if (compare(key, '>', root.right.person)) {
+      return leftRotation(root)
+    }
+    else {
+      root.right = rightRotation(root.right)
+      return leftRotation(root)
+    }
+  }
+
+  return root
+}
+
+const removeNode = (root, key, compare) => {
+  if (root == null) {
+    return root
+  }
+
+  if (compare(key, '<', root.person)) {
+    root.left = removeNode(root.left, key, compare)
+  }
+  else if (compare(key, '>', root.person)) {
+    root.right = removeNode(root.right, key, compare)
+  }
+  else {
+    if (root.left == null) {
+      const temp = root.right
+      root = null
+      return temp
+    }
+    else if (root.right == null) {
+      const temp = root.left
+      root = null
+      return temp
+    }
+
+    const temp = getMinValueNode(root.right)
+    root.person = temp.person
+    root.right = removeNode(root.right, temp.person, compare)
+  }
+
+ if (root == null) return root
+
+  // Balance
+  root.height = 1 + Math.max(getHeight(root.left), getHeight(root.right))  
+  balanceFactor = getBalance(root)
+
+  if (balanceFactor > 1) {
+    if (getBalance(root.left) >= 0) {
+      return rightRotation(root)
+    }
+    else {
+      root.left = leftRotation(root.left)
+      return rightRotation(root)
+    }
+  }
+  if (balanceFactor < -1) {
+    if (getBalance(root.right) <= 0) {
+      return leftRotation(root)
+    }
+    else {
+      root.right = rightRotation(root.right)
+      return leftRotation(root)
+    }
+  }
+  return root
+}
+
+const searchNode = () => {
+  
+}
+
+const getHeight = (root) => {
+  if (root == null) return 0
+  
+  return getMinValueNode(root.left)
+}
+
+const getBalance = (root) => {
+  if (root == null) return 0
+  return getHeight(root.left) - getHeight(root.right)
+}
+
+const leftRotation = (z) => {
+  y = z.right
+  T2 = y.left
+  y.left = z
+  z.right = T2
+  z.height = 1 + Math.max(getHeight(z.left), getHeight(z.right))
+  y.height = 1 + Math.max(getHeight(y.left), getHeight(y.right))
+  return y
+}
+
+const rightRotation = (z) => {
+  y = z.left
+  T3 = y.right
+  y.right = z
+  z.left = T3
+  z.height = 1 + Math.max(getHeight(z.left), getHeight(z.right))
+  y.height = 1 + Math.max(getHeight(y.left), getHeight(y.right))
+  return y
+}
+
+const getMinValueNode = (root) => {
+  if (root == null || root.left == null) return root
+  return getMinValueNode(root.left)
+}
+
+const sortByName = () => {
+  const items = inOrder(mainRoot)
+  mainRoot = null
+  sortedByName = true
+  
+  items.forEach(x => {
+    insert(x)
+  })
+}
+
+const sortByDPI = () => {
+  const items = inOrder(mainRoot)
+  mainRoot = null
+  sortedByName = false
+  
+  items.forEach(x => {
+    insert(x)
+  })
+}
+
+const inOrder = (root, items = []) => {
+  if (root != null) {
+    inOrder(root.left, items)
+    items.push(root.person)
+    inOrder(root.right, items)
+  }
+
+  return items
+}
+
+const print2 = () => {
+  print(mainRoot)
+}
+
+const print = (root) => {
+  if (root != null) {
+    print(root.left)
+    console.log(root.person)
+    print(root.right)
+  }
+}
+
+
+/* sortByDPI()
 data.forEach(x => {
-  tree.insert(x)
+  insert(x)
 })
+print2()
 
 
 const doso = () => {
   data.forEach(x => {
-    tree.delete(x.name, x.dpi)
+    remove(x.name, x.dpi)
   })
-
 }
 doso()
+print2()
 
 setTimeout(() => {
-  console.log('start')
-  tree.print2()
-  console.log(tree.root)
-  tree.print2()
- }, 5000); */
+  print2()
+ }, 5000);
+ */
+
+ const dict = {
+  "INSERT": insert,
+  "PATCH": update,
+  "DELETE": remove,
+}
+
+async function doStuff() {
+  fetch('data.csv')
+    .then(response => response.text())
+    .then(data => {
+      data = data.split('\r\n')
+        .map(x => {
+          const text = x.split(';')
+          return [text[0], JSON.parse(text[1])]
+        })
+      
+      // do stuff here
+      data.forEach((item) => {
+        const operationString = item[0]
+        const person = item[1]
+        dict[operationString](person)
+        print2()
+      })
+      print2()
+    })
+}
+
+doStuff()
