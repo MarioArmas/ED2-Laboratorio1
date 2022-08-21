@@ -1,32 +1,3 @@
-// name, dpi, birthDate, address
-/* function comparation(name) {
-  let asciiName = []
-  for (let i = 0; i < name.length; i++) {
-    asciiName.push(name.charCodeAt(i))
-  }
-
-  return asciiName
-} */
-const data = [
-{"name":"diego","dpi":12345678,"dateBirth":"01/01/1900","address":"guatemala"},
-{"name":"max","dpi":12345679,"dateBirth":"02/01/1900","address":"guatemala"},
-{"name":"max","dpi":12345679,"dateBirth":"02/02/1900"},
-{"name":"max","dpi":12345679,"address":"el salvador"},
-{"name":"diego","dpi":12345621,"dateBirth":"02/01/1900","address":"guatemala"},
-{"name":"diego","dpi":12345622,"dateBirth":"03/01/1900","address":"guatemala"},
-{"name":"diego","dpi":12345622,"dateBirth":"05/01/1900"},
-{"name":"diego","dpi":12345678}]
-
-
-
-/* const Node = {
-  "person": null,
-  "left": null,
-  "right": null,
-  "height": 1
-  // nameAscii = compare(person.name)
-} */
-
 let mainRoot = null
 let sortedByName = true
 
@@ -75,11 +46,11 @@ const update = (name, dpi) => {
 
 }
 
-const search = (name) => {
+const search = (key) => {
   sortByName()
-  const key = { name }
+  const items = searchNode(mainRoot, key, [])
   
-  // TODO:
+  return items
 }
 
 const insertNode = (root, key, compare) => {
@@ -181,8 +152,14 @@ const removeNode = (root, key, compare) => {
   return root
 }
 
-const searchNode = () => {
+const searchNode = (root, key, items = []) => {
+  if (root == null) return
   
+  searchNode(root.left, key, items)
+  if (root.person.name == key.name) items.push(root.person)
+  searchNode(root.right, key, items)
+
+  return items
 }
 
 const getHeight = (root) => {
@@ -242,11 +219,11 @@ const sortByDPI = () => {
 }
 
 const inOrder = (root, items = []) => {
-  if (root != null) {
-    inOrder(root.left, items)
-    items.push(root.person)
-    inOrder(root.right, items)
-  }
+  if (root == null) return
+
+  inOrder(root.left, items)
+  items.push(root.person)
+  inOrder(root.right, items)
 
   return items
 }
@@ -308,6 +285,7 @@ async function doStuff() {
         print2()
       })
       print2()
+      console.log(search({ name: 'diego' }))
     })
 }
 
