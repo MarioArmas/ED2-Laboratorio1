@@ -246,7 +246,7 @@ const showInOrder = (root) => {
   }
 }
 
- const dictionary = {
+const dictionary = {
   "INSERT": insert,
   "PATCH": update,
   "DELETE": remove,
@@ -262,7 +262,6 @@ async function mainFunction() {
           return [text[0], JSON.parse(text[1])]
         })
       
-      // do stuff here
       data.forEach((item) => {
         const operationString = item[0]
         const person = item[1]
@@ -271,7 +270,7 @@ async function mainFunction() {
         dictionary[operationString](person)
       })
       showInOrder(mainRoot)
-      //console.log(search({ name: 'diego' }))
+      console.log('SEARCH', search({ name: 'diego' }))
     })
 }
 
