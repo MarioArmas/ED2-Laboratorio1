@@ -41,9 +41,8 @@ const remove = (key) => {
   mainRoot = removeNode(mainRoot, key, func)
 }
 
-const update = (name, dpi) => {
-  // TODO:
-
+const update = (key) => {
+  updateNode(mainRoot, key)
 }
 
 const search = (key) => {
@@ -54,7 +53,6 @@ const search = (key) => {
 }
 
 const insertNode = (root, key, compare) => {
-  print()
   if (root == null) {
     return Node = {
       "person": key,
@@ -152,6 +150,18 @@ const removeNode = (root, key, compare) => {
   return root
 }
 
+const updateNode = (root, key) => {
+  if (root == null) return
+
+  updateNode(root.left, key)
+  if (root.person.name == key.name & root.person.dpi == key.dpi) {
+    if (key.hasOwnProperty('address')) root.person.address = key.address
+    if (key.hasOwnProperty('dateBirth')) root.person.dateBirth = key.dateBirth
+    return
+  }
+  updateNode(root.right, key)
+}
+
 const searchNode = (root, key, items = []) => {
   if (root == null) return
   
@@ -228,46 +238,21 @@ const inOrder = (root, items = []) => {
   return items
 }
 
-const print2 = () => {
-  print(mainRoot)
-}
-
-const print = (root) => {
+const showInOrder = (root) => {
   if (root != null) {
-    print(root.left)
+    showInOrder(root.left)
     console.log(root.person)
-    print(root.right)
+    showInOrder(root.right)
   }
 }
 
-
-/* sortByDPI()
-data.forEach(x => {
-  insert(x)
-})
-print2()
-
-
-const doso = () => {
-  data.forEach(x => {
-    remove(x.name, x.dpi)
-  })
-}
-doso()
-print2()
-
-setTimeout(() => {
-  print2()
- }, 5000);
- */
-
- const dict = {
+ const dictionary = {
   "INSERT": insert,
   "PATCH": update,
   "DELETE": remove,
 }
 
-async function doStuff() {
+async function mainFunction() {
   fetch('data.csv')
     .then(response => response.text())
     .then(data => {
@@ -281,12 +266,13 @@ async function doStuff() {
       data.forEach((item) => {
         const operationString = item[0]
         const person = item[1]
-        dict[operationString](person)
-        print2()
+        person?.address
+        person?.dateBirth
+        dictionary[operationString](person)
       })
-      print2()
-      console.log(search({ name: 'diego' }))
+      showInOrder(mainRoot)
+      //console.log(search({ name: 'diego' }))
     })
 }
 
-doStuff()
+mainFunction()
