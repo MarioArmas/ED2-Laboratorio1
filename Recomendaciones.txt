@@ -1,0 +1,1 @@
+Como recomendaciones para buscar por nombres y apellidos se podría realizar un segundo arbol para buscar por apellidos y para solventar la duplicación de memoria en lugar de almacenar los datos de cada usuario únicamente sería necesario almacenar un puntero hacia los datos
