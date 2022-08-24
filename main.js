@@ -253,19 +253,19 @@ const dictionary = {
 }
 
 async function readFile() {
-  const file = await fetch('data.csv')
+  const file = await fetch('input.csv')
   .then(response => response.text())
   .then(data => {
     return data.split('\r\n')
-      .map(x => {
-        const text = x.split(';')
+      .filter(el => el != '')
+      .map(operation => {
+        const text = operation.split(';')
         return [text[0], JSON.parse(text[1])]
       })
   })
 
   return file
 }
-
 
 async function mainFunction(data) {
   data.forEach((item) => {
@@ -275,9 +275,8 @@ async function mainFunction(data) {
     person?.dateBirth
     dictionary[operationString](person)
   })
-  showInOrder(mainRoot)
-  console.log('SEARCH', search({ name: 'diego' }))
-    
+
+  console.log('SEARCH', search({ name: 'carmela' }))
 }
 
 mainFunction(await readFile())
