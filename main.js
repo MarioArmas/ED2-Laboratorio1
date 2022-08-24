@@ -127,7 +127,7 @@ const removeNode = (root, key, compare) => {
 
   // Balance
   root.height = 1 + Math.max(getHeight(root.left), getHeight(root.right))  
-  balanceFactor = getBalance(root)
+  const balanceFactor = getBalance(root)
 
   if (balanceFactor > 1) {
     if (getBalance(root.left) >= 0) {
@@ -252,26 +252,32 @@ const dictionary = {
   "DELETE": remove,
 }
 
-async function mainFunction() {
-  fetch('data.csv')
-    .then(response => response.text())
-    .then(data => {
-      data = data.split('\r\n')
-        .map(x => {
-          const text = x.split(';')
-          return [text[0], JSON.parse(text[1])]
-        })
-      
-      data.forEach((item) => {
-        const operationString = item[0]
-        const person = item[1]
-        person?.address
-        person?.dateBirth
-        dictionary[operationString](person)
+async function readFile() {
+  const file = await fetch('data.csv')
+  .then(response => response.text())
+  .then(data => {
+    return data.split('\r\n')
+      .map(x => {
+        const text = x.split(';')
+        return [text[0], JSON.parse(text[1])]
       })
-      showInOrder(mainRoot)
-      console.log('SEARCH', search({ name: 'diego' }))
-    })
+  })
+
+  return file
 }
 
-mainFunction()
+
+async function mainFunction(data) {
+  data.forEach((item) => {
+    const operationString = item[0]
+    const person = item[1]
+    person?.address
+    person?.dateBirth
+    dictionary[operationString](person)
+  })
+  showInOrder(mainRoot)
+  console.log('SEARCH', search({ name: 'diego' }))
+    
+}
+
+mainFunction(await readFile())
