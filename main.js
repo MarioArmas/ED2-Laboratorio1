@@ -163,11 +163,12 @@ const updateNode = (root, key) => {
 }
 
 const searchNode = (root, key, items = []) => {
+  sortByName()
   if (root == null) return
-  
-  searchNode(root.left, key, items)
+
+  if (key.name <= root.person.name) searchNode(root.left, key, items)
   if (root.person.name == key.name) items.push(root.person)
-  searchNode(root.right, key, items)
+  if (key.name >= root.person.name) searchNode(root.right, key, items)
 
   return items
 }
